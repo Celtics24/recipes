@@ -1,0 +1,7 @@
+name = "recipes"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[[kv_namespaces]]
+binding = "RECIPES"
+id = "KV_NAMESPACE_ID_PLACEHOLDER"
