@@ -11,10 +11,10 @@
 
     // Filled at deploy time (public Firebase web config, not a secret).
     var FIREBASE_CONFIG = {
-        apiKey: 'FIREBASE_API_KEY_PLACEHOLDER',
-        authDomain: 'FIREBASE_AUTH_DOMAIN_PLACEHOLDER',
-        projectId: 'FIREBASE_PROJECT_ID_PLACEHOLDER',
-        appId: 'FIREBASE_APP_ID_PLACEHOLDER',
+        apiKey: 'AIzaSyBbvdT3AJXw3RiDUZYFr78c_PHZ2sHYLMs',
+        authDomain: 'hametkonim.firebaseapp.com',
+        projectId: 'hametkonim',
+        appId: '1:538951478527:web:24dade219bd9b5bb30b0ca',
     };
 
     var ICONS = {

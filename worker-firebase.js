@@ -13,7 +13,7 @@ const MAX_RECIPES = 500;
 const JWKS_URL = 'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com';
 
 // Filled at deploy time with the Firebase project id (public, not a secret).
-const FIREBASE_PROJECT_ID = 'FIREBASE_PROJECT_ID_PLACEHOLDER';
+const FIREBASE_PROJECT_ID = 'hametkonim';
 
 function corsHeaders(origin) {
   const h = {
