@@ -109,7 +109,9 @@
                 (state.error ? '<p class="gate-error">' + esc(state.error) + '</p>' : '') +
                 '<div class="gate">' +
                 '<button class="gate-submit" id="verified-btn">אישרתי, להתחברות</button>' +
-                '<button class="switch-link" id="resend-btn">לשלוח שוב</button>' +
+                '<p class="gate-note">לשליחה חוזרת של מייל האימות, מזינים את הסיסמה לאתר.</p>' +
+                '<input class="gate-input" id="resend-password" type="password" placeholder="סיסמה לאתר" autocomplete="current-password">' +
+                '<button class="switch-link" id="resend-btn"' + (state.pending ? ' disabled' : '') + '>לשלוח שוב</button>' +
                 '<button class="switch-link" data-mode="login">חזרה להתחברות</button></div>';
         }
         h += '</div></div>';
@@ -166,13 +168,28 @@
         if (vb) vb.addEventListener('click', function () { state.authMode = 'login'; state.error = ''; render(); });
         var rs = document.getElementById('resend-btn');
         if (rs) rs.addEventListener('click', function () {
-            state.error = '';
-            // Resend requires the password again; simplest reliable path is the reset email.
+            var passwordInput = document.getElementById('resend-password');
+            var password = passwordInput ? passwordInput.value : '';
             if (!state.pendingEmail) { state.authMode = 'login'; render(); return; }
-            auth.sendPasswordResetEmail(state.pendingEmail).then(function () {
-                state.notice = ''; state.error = 'נשלח מייל. אם החשבון עוד לא מאומת, אפשר גם להירשם שוב עם אותו מייל אחרי איפוס.';
-                render();
-            }).catch(function () { state.error = 'לא הצלחנו לשלוח, נסי שוב'; render(); });
+            if (!password) { state.error = 'צריך להזין את הסיסמה לאתר כדי לשלוח שוב.'; render(); return; }
+            state.pending = true; state.error = ''; render();
+            auth.signInWithEmailAndPassword(state.pendingEmail, password).then(function (cred) {
+                var alreadyVerified = cred.user.emailVerified;
+                return (alreadyVerified ? Promise.resolve() : cred.user.sendEmailVerification())
+                    .then(function () { return auth.signOut(); })
+                    .then(function () {
+                        state.pending = false;
+                        state.authMode = 'verify-sent';
+                        state.error = alreadyVerified ? 'המייל כבר מאומת. אפשר להתחבר.' : 'נשלח מייל אימות נוסף.';
+                        render();
+                    });
+            }).catch(function () {
+                return auth.signOut().catch(function () {}).then(function () {
+                    state.pending = false; state.authMode = 'verify-sent';
+                    state.error = 'לא הצלחנו לשלוח. בדקי את הסיסמה ונסי שוב.';
+                    render();
+                });
+            });
         });
     }
 
